@@ -6,39 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="120dp"
-        android:text="@string/frontRightTemp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.511" />
-
-    <TextView
-        android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="116dp"
-        android:text="@string/rightRearTemp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.557" />
-
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="104dp"
-        android:text="@string/leftFrontTemp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.557" />
-
     <Switch
         android:id="@+id/switch2"
         android:layout_width="wrap_content"
@@ -47,30 +14,145 @@
         android:text="@string/bleOn"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
-        app:layout_constraintVertical_bias="1.0" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="51dp"
-        android:layout_height="18dp"
-        android:layout_marginStart="108dp"
-        android:layout_marginBottom="16dp"
-        android:text="@string/leftFrontTemp"
-        app:layout_constraintBottom_toTopOf="@+id/textView2"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.99" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="191dp"
-        android:layout_height="374dp"
+        android:id="@+id/imageView2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginEnd="1dp"
+        android:layout_marginBottom="1dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@mipmap/trailer" />
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@mipmap/trucktrailer_foreground"
+        tools:ignore="ContentDescription" />
+
+    <ImageView
+        android:id="@+id/lrBatt"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="31dp"
+        android:layout_marginEnd="369dp"
+        android:layout_marginBottom="284dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/rrBatt"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lfBatt"
+        app:srcCompat="@android:drawable/ic_lock_idle_low_battery"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@+id/leftRearTemp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="130dp"
+        android:layout_marginEnd="199dp"
+        android:layout_marginBottom="283dp"
+        android:outlineProvider="none"
+        android:text="@string/leftRearTemp"
+        android:textAlignment="center"
+        android:textSize="36sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/rightRearTemp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/leftFrontTemp" />
+
+    <TextView
+        android:id="@+id/rightFrontTemp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="459dp"
+        android:layout_marginEnd="130dp"
+        android:layout_marginBottom="24dp"
+        android:outlineProvider="none"
+        android:text="@string/rightFrontTemp"
+        android:textAlignment="center"
+        android:textSize="36sp"
+        app:layout_constraintBottom_toTopOf="@+id/rightRearTemp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/leftFrontTemp"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/rrBatt"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="25dp"
+        android:layout_marginBottom="284dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/lrBatt"
+        app:layout_constraintTop_toBottomOf="@+id/rfBatt"
+        app:srcCompat="@android:drawable/ic_lock_idle_low_battery" />
+
+    <TextView
+        android:id="@+id/rightRearTemp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="130dp"
+        android:layout_marginBottom="283dp"
+        android:outlineProvider="none"
+        android:text="@string/rightRearTemp"
+        android:textAlignment="center"
+        android:textSize="36sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/leftRearTemp"
+        app:layout_constraintTop_toBottomOf="@+id/rightFrontTemp" />
+
+    <TextView
+        android:id="@+id/leftFrontTemp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="130dp"
+        android:layout_marginTop="459dp"
+        android:layout_marginEnd="199dp"
+        android:layout_marginBottom="24dp"
+        android:outlineProvider="none"
+        android:text="@string/leftFrontTemp"
+        android:textAlignment="center"
+        android:textSize="36sp"
+        app:layout_constraintBottom_toTopOf="@+id/leftRearTemp"
+        app:layout_constraintEnd_toStartOf="@+id/rightFrontTemp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/lfBatt"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="31dp"
+        android:layout_marginTop="459dp"
+        android:layout_marginEnd="369dp"
+        android:layout_marginBottom="43dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/lrBatt"
+        app:layout_constraintEnd_toStartOf="@+id/rfBatt"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/ic_lock_idle_low_battery" />
+
+    <ImageView
+        android:id="@+id/rfBatt"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="459dp"
+        android:layout_marginEnd="25dp"
+        android:layout_marginBottom="43dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/rrBatt"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/lfBatt"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/ic_lock_idle_low_battery"
+        tools:ignore="ContentDescription" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

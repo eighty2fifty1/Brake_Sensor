@@ -19,7 +19,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.ParcelUuid;
 import android.util.Log;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -57,6 +60,9 @@ public class MainActivity extends AppCompatActivity {
     private int[] lcData = new int[3];
     private int[] rcData = new int[3];
 
+    private TextView leftFrontTemp, rightFrontTemp, leftRearTemp, rightRearTemp, leftCenterTemp, rightCenterTemp;
+    private ImageView lfBatt, rfBatt, lrBatt, rrBatt, lcBatt, rcBatt;
+
 
     //////////////////////////////////////////////////////////////////
     //                                                              //
@@ -93,7 +99,14 @@ public class MainActivity extends AppCompatActivity {
             String incomingData = new String(characteristic.getValue(), StandardCharsets.UTF_8);
             //Log.i(TAG, incomingData);
             parseNewData(incomingData);
-            printTempInLog();
+            runOnUiThread(new Runnable() {
+
+                @Override
+                public void run() {
+                    updateUIData();
+                    // Stuff that updates the UI
+                }
+            });
         }
 
         @Override
@@ -136,6 +149,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        //enables UI components
+        leftFrontTemp = (TextView) findViewById(R.id.leftFrontTemp);
+        rightFrontTemp = (TextView) findViewById(R.id.rightFrontTemp);
+        leftRearTemp = (TextView) findViewById(R.id.leftRearTemp);
+        rightRearTemp = (TextView) findViewById(R.id.rightRearTemp);
+        lfBatt = (ImageView) findViewById(R.id.lfBatt);
+        rfBatt = (ImageView) findViewById(R.id.rfBatt);
+        lrBatt = (ImageView) findViewById(R.id.lrBatt);
+        rrBatt = (ImageView) findViewById(R.id.rrBatt);
+
         mbluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         mbluetoothAdapter = mbluetoothManager.getAdapter();
         //GattServerActivity server = new GattServerActivity();
@@ -204,39 +228,79 @@ public class MainActivity extends AppCompatActivity {
     //parses incoming string into arrays of ints and divides them into individual positions
     private void parseNewData(String newData){
         String[] parts = newData.split("i");            //index, temp, batt
-        Log.i(TAG, parts[0]);              //debugging
+        //Log.i(TAG, parts[0]);              //debugging
         for (int i = 0; i < 3; i++) {
             incomingDataInt[i] = Integer.parseInt(parts[i]);
         }
+        Log.i(TAG, "incoming data: " + incomingDataInt[0]);
         switch (incomingDataInt[0]){
             case 1:
-                lfData = incomingDataInt;
+                lfData =  incomingDataInt.clone();
+                Log.i(TAG, String.valueOf(lfData[1]));
+                Log.i(TAG, String.valueOf(rfData[1]));
+                Log.i(TAG, String.valueOf(lrData[1]));
+                Log.i(TAG, String.valueOf(rrData[1]));
                 break;
             case 2:
-                rfData = incomingDataInt;
+                rfData = incomingDataInt.clone();
+                Log.i(TAG, String.valueOf(lfData[1]));
+                Log.i(TAG, String.valueOf(rfData[1]));
+                Log.i(TAG, String.valueOf(lrData[1]));
+                Log.i(TAG, String.valueOf(rrData[1]));
                 break;
             case 3:
-                lrData = incomingDataInt;
+                lrData = incomingDataInt.clone();
+                Log.i(TAG, String.valueOf(lfData[1]));
+                Log.i(TAG, String.valueOf(rfData[1]));
+                Log.i(TAG, String.valueOf(lrData[1]));
+                Log.i(TAG, String.valueOf(rrData[1]));
                 break;
             case 4:
-                rrData = incomingDataInt;
+                rrData = incomingDataInt.clone();
+                Log.i(TAG, String.valueOf(lfData[1]));
+                Log.i(TAG, String.valueOf(rfData[1]));
+                Log.i(TAG, String.valueOf(lrData[1]));
+                Log.i(TAG, String.valueOf(rrData[1]));
                 break;
             case 5:
-                lcData = incomingDataInt;
+                lcData = incomingDataInt.clone();
                 break;
             case 6:
-                rcData = incomingDataInt;
+                rcData = incomingDataInt.clone();
                 break;
         }
     }
 
-    private void printTempInLog(){
-        Log.i(TAG, "left front:" + lfData[0]);
-        Log.i(TAG, "right front:" + rfData.toString());
-        Log.i(TAG, "left center:" + lcData.toString());
-        Log.i(TAG, "right center:" + rcData.toString());
-        Log.i(TAG, "left rear:" + lrData.toString());
-        Log.i(TAG, "right rear:" + rrData.toString());
+    //updates all UI info
+    private void updateUIData(){
+        //updates temp
+        leftFrontTemp.setText(String.valueOf(lfData[1]));
+        rightFrontTemp.setText(String.valueOf(rfData[1]));
+        leftRearTemp.setText(String.valueOf(lrData[1]));
+        rightRearTemp.setText(String.valueOf(rrData[1]));
+
+        //shows battery low icon if batt < 20%
+        if (lfData[2] < 20){
+            lfBatt.setVisibility(View.VISIBLE);
+        }
+        else lfBatt.setVisibility(View.INVISIBLE);
+
+        if (rfData[2] < 20){
+            rfBatt.setVisibility(View.VISIBLE);
+        }
+        else rfBatt.setVisibility(View.INVISIBLE);
+
+        if (lrData[2] < 20){
+            lrBatt.setVisibility(View.VISIBLE);
+        }
+        else lrBatt.setVisibility(View.INVISIBLE);
+
+        if (rrData[2] < 20){
+            rrBatt.setVisibility(View.VISIBLE);
+        }
+        else rrBatt.setVisibility(View.INVISIBLE);
+
+
 
     }
 

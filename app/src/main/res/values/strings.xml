@@ -1,10 +1,10 @@
 <resources>
     <string name="app_name">Brake Sensor</string>
-    <string name="rightFrontTemp">TextView</string>
-    <string name="leftRearTemp">TextView</string>
-    <string name="leftFrontTemp">TextView</string>
-    <string name="rightRearTemp">TextView</string>
+
     <string name="bleOn">Bluetooth</string>
-    <string name="todo">TODO</string>
-    <string name="frontRightTemp">Textview</string>
+    <string name="leftFrontTemp">LeftFrontTemp</string>
+    <string name="rightFrontTemp">RightFrontTemp</string>
+    <string name="leftRearTemp">LeftRearTemp</string>
+    <string name="rightRearTemp">RightRearTemp</string>
+
 </resources>
