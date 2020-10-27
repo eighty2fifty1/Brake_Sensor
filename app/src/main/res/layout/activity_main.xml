@@ -2,157 +2,187 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <Switch
-        android:id="@+id/switch2"
+
+    <Button
+        android:id="@+id/rrLed"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:backgroundTint="#8B8F8B"
+        android:visibility="visible"
+        app:layout_constraintStart_toEndOf="@+id/rrGauge"
+        app:layout_constraintTop_toBottomOf="@+id/rrBatt" />
+
+    <Button
+        android:id="@+id/rfLed"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:backgroundTint="#8B8F8B"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/rfBatt"
+        app:layout_constraintStart_toEndOf="@+id/rfGauge" />
+
+    <Button
+        android:id="@+id/lrLed"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:backgroundTint="#8B8F8B"
+        android:visibility="visible"
+        app:layout_constraintEnd_toStartOf="@+id/lrGauge"
+        app:layout_constraintTop_toBottomOf="@+id/lrBatt" />
+
+    <ProgressBar
+        android:id="@+id/rfBatt"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="85dp"
+        android:layout_height="105dp"
+        android:max="100"
+        android:rotation="-90"
+        android:scaleY="3"
+        app:layout_constraintBottom_toTopOf="@+id/guideline2"
+        app:layout_constraintStart_toEndOf="@+id/rfGauge" />
+
+    <in.unicodelabs.kdgaugeview.KdGaugeView
+        android:id="@+id/rfGauge"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        android:layout_marginStart="12dp"
+
+        app:animationTime="2000"
+        app:layout_constraintBottom_toTopOf="@+id/guideline2"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:maxSpeed="200"
+        app:minSpeed="0"
+        app:speed="46"
+        app:speedDialRingInnerPadding="10dp"
+        app:speedTextSize="30dp"
+        app:speed_limit="150"
+        app:unitOfMeasurement="\u2109"
+        app:unitOfMeasurementTextSize="15dp" />
+
+    <in.unicodelabs.kdgaugeview.KdGaugeView
+        android:id="@+id/lfGauge"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        android:layout_marginEnd="12dp"
+        app:animationTime="2000"
+        app:layout_constraintBottom_toTopOf="@+id/guideline2"
+
+
+        app:layout_constraintEnd_toStartOf="@+id/guideline"
+        app:maxSpeed="200"
+        app:minSpeed="0"
+        app:speed="46"
+        app:speedDialRingInnerPadding="10dp"
+        app:speedTextSize="30dp"
+        app:speed_limit="150"
+        app:unitOfMeasurement="\u2109"
+        app:unitOfMeasurementTextSize="15dp" />
+
+    <Button
+        android:id="@+id/lfLed"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:backgroundTint="#8B8F8B"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/lfBatt"
+        app:layout_constraintEnd_toStartOf="@+id/lfGauge" />
+
+    <ProgressBar
+        android:id="@+id/lfBatt"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="85dp"
+        android:layout_height="105dp"
+        android:max="100"
+        android:rotation="-90"
+        android:scaleY="3"
+        app:layout_constraintBottom_toTopOf="@+id/guideline2"
+        app:layout_constraintEnd_toStartOf="@+id/lfGauge" />
+
+    <in.unicodelabs.kdgaugeview.KdGaugeView
+        android:id="@+id/lrGauge"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        android:layout_marginEnd="12dp"
+        app:animationTime="2000"
+        app:layout_constraintEnd_toStartOf="@+id/guideline"
+
+
+        app:layout_constraintTop_toBottomOf="@+id/lfGauge"
+        app:maxSpeed="200"
+        app:minSpeed="0"
+        app:speed="46"
+        app:speedDialRingInnerPadding="10dp"
+        app:speedTextSize="30dp"
+        app:speed_limit="150"
+        app:unitOfMeasurement="\u2109"
+        app:unitOfMeasurementTextSize="15dp" />
+
+    <in.unicodelabs.kdgaugeview.KdGaugeView
+        android:id="@+id/rrGauge"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        android:layout_marginStart="12dp"
+
+
+        app:animationTime="2000"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@+id/rfGauge"
+        app:maxSpeed="200"
+        app:minSpeed="0"
+        app:speed="46"
+        app:speedDialRingInnerPadding="10dp"
+        app:speedTextSize="30dp"
+        app:speed_limit="150"
+        app:unitOfMeasurement="\u2109"
+        app:unitOfMeasurementTextSize="15dp" />
+
+    <ProgressBar
+        android:id="@+id/rrBatt"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="85dp"
+        android:layout_height="105dp"
+        android:max="100"
+        android:rotation="-90"
+        android:scaleY="3"
+        app:layout_constraintStart_toEndOf="@+id/rrGauge"
+        app:layout_constraintTop_toBottomOf="@+id/rfBatt" />
+
+    <ProgressBar
+        android:id="@+id/lrBatt"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="85dp"
+        android:layout_height="105dp"
+        android:max="100"
+        android:rotation="-90"
+        android:scaleY="3"
+        app:layout_constraintEnd_toStartOf="@+id/lrGauge"
+        app:layout_constraintTop_toBottomOf="@+id/lfBatt" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="80dp"
-        android:text="@string/bleOn"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintGuide_begin="205dp"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="1dp"
-        android:layout_marginTop="1dp"
-        android:layout_marginEnd="1dp"
-        android:layout_marginBottom="1dp"
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0"
-        app:srcCompat="@mipmap/trucktrailer_foreground"
-        tools:ignore="ContentDescription" />
-
-    <ImageView
-        android:id="@+id/lrBatt"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="31dp"
-        android:layout_marginEnd="369dp"
-        android:layout_marginBottom="284dp"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/rrBatt"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lfBatt"
-        app:srcCompat="@android:drawable/ic_lock_idle_low_battery"
-        tools:ignore="ContentDescription" />
-
-    <TextView
-        android:id="@+id/leftRearTemp"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="130dp"
-        android:layout_marginEnd="199dp"
-        android:layout_marginBottom="283dp"
-        android:outlineProvider="none"
-        android:text="@string/leftRearTemp"
-        android:textAlignment="center"
-        android:textSize="36sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/rightRearTemp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/leftFrontTemp" />
-
-    <TextView
-        android:id="@+id/rightFrontTemp"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="459dp"
-        android:layout_marginEnd="130dp"
-        android:layout_marginBottom="24dp"
-        android:outlineProvider="none"
-        android:text="@string/rightFrontTemp"
-        android:textAlignment="center"
-        android:textSize="36sp"
-        app:layout_constraintBottom_toTopOf="@+id/rightRearTemp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/leftFrontTemp"
+        app:layout_constraintGuide_end="382dp"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/rrBatt"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginEnd="25dp"
-        android:layout_marginBottom="284dp"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/lrBatt"
-        app:layout_constraintTop_toBottomOf="@+id/rfBatt"
-        app:srcCompat="@android:drawable/ic_lock_idle_low_battery" />
-
-    <TextView
-        android:id="@+id/rightRearTemp"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginEnd="130dp"
-        android:layout_marginBottom="283dp"
-        android:outlineProvider="none"
-        android:text="@string/rightRearTemp"
-        android:textAlignment="center"
-        android:textSize="36sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/leftRearTemp"
-        app:layout_constraintTop_toBottomOf="@+id/rightFrontTemp" />
-
-    <TextView
-        android:id="@+id/leftFrontTemp"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="130dp"
-        android:layout_marginTop="459dp"
-        android:layout_marginEnd="199dp"
-        android:layout_marginBottom="24dp"
-        android:outlineProvider="none"
-        android:text="@string/leftFrontTemp"
-        android:textAlignment="center"
-        android:textSize="36sp"
-        app:layout_constraintBottom_toTopOf="@+id/leftRearTemp"
-        app:layout_constraintEnd_toStartOf="@+id/rightFrontTemp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/lfBatt"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="31dp"
-        android:layout_marginTop="459dp"
-        android:layout_marginEnd="369dp"
-        android:layout_marginBottom="43dp"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/lrBatt"
-        app:layout_constraintEnd_toStartOf="@+id/rfBatt"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_lock_idle_low_battery" />
-
-    <ImageView
-        android:id="@+id/rfBatt"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="459dp"
-        android:layout_marginEnd="25dp"
-        android:layout_marginBottom="43dp"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/rrBatt"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/lfBatt"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_lock_idle_low_battery"
-        tools:ignore="ContentDescription" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,57 +1,39 @@
 package com.example.brakesensor;
 
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothGatt;
-import android.bluetooth.BluetoothGattCallback;
-import android.bluetooth.BluetoothGattCharacteristic;
-import android.bluetooth.BluetoothGattDescriptor;
-import android.bluetooth.BluetoothManager;
-import android.bluetooth.BluetoothProfile;
-import android.bluetooth.le.BluetoothLeScanner;
-import android.bluetooth.le.ScanCallback;
-import android.bluetooth.le.ScanFilter;
-import android.bluetooth.le.ScanResult;
-import android.bluetooth.le.ScanSettings;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.ParcelUuid;
+import android.os.IBinder;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import in.unicodelabs.kdgaugeview.KdGaugeView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String TAG = TempDataProfile.class.getSimpleName();
-    private static final int REQUEST_ENABLE_BT = 1;
-    private BluetoothManager mbluetoothManager = null;
-    private BluetoothAdapter mbluetoothAdapter = null;
-    private BluetoothLeScanner bluetoothLeScanner =
-            BluetoothAdapter.getDefaultAdapter().getBluetoothLeScanner();
-
-    private BluetoothGatt deviceGatt;
-    private BluetoothDevice device = null;
-
-    private boolean mScanning = false;
-    private Handler handler = new Handler();
-    private UUID myServiceUUID = UUID.fromString("00001818-0000-1000-8000-00805f9b34fb");
-    private UUID myCharacteristicUUID = UUID.fromString("00002A6E-0000-1000-8000-00805f9b34fb");
-    private ParcelUuid pServiceUUID = new ParcelUuid(myServiceUUID);
-    private ParcelUuid pCharacteristicUUID = new ParcelUuid(myCharacteristicUUID);
-    public static final UUID CONFIG_DESCRIPTOR = UUID.fromString("00002902-0000-1000-8000-00805f9b34fb");
-
+    private static final String TAG = MainActivity.class.getSimpleName();
+    private boolean connected = false;
+    private BluetoothLEService mBluetoothLEService;
     private int[] incomingDataInt = new int[3];
     private int[] lfData = new int[3];
     private int[] rfData = new int[3];
@@ -59,10 +41,69 @@ public class MainActivity extends AppCompatActivity {
     private int[] rrData = new int[3];
     private int[] lcData = new int[3];
     private int[] rcData = new int[3];
+    //ints for incoming message
+    private int[] incomingMsgInt = new int[7];
+    private int lfStatus, rfStatus, lrStatus, rrStatus, lcStatus, rcStatus, sensorsConnected;
+    //ints for outgoing message
+    private int serverReset, hardwareResetClient, softwareResetClient, macRequest, forceScan, sensorSleep;
+    private int sensorsExpected = 4;
 
     private TextView leftFrontTemp, rightFrontTemp, leftRearTemp, rightRearTemp, leftCenterTemp, rightCenterTemp;
-    private ImageView lfBatt, rfBatt, lrBatt, rrBatt, lcBatt, rcBatt;
+    private ProgressBar lfBatt, rfBatt, lrBatt, rrBatt, lcBatt, rcBatt;
+    private KdGaugeView lfGauge, rfGauge, lrGauge, rrGauge, lcGauge, rcGauge;
+    private Button[] statusLed = new Button[6];
 
+
+    private final ServiceConnection mServiceConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder service) {
+            mBluetoothLEService = ((BluetoothLEService.LocalBinder) service).getService();
+            if (!mBluetoothLEService.initialize()) {
+                Log.e(TAG, "Unable to initialize Bluetooth");
+                finish();
+            }
+            // Automatically connects to the device upon successful start-up initialization.
+            //mBluetoothLEService.connect(mDeviceAddress);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            mBluetoothLEService = null;
+        }
+    };
+
+
+    // Handles various events fired by the Service.
+// ACTION_GATT_CONNECTED: connected to a GATT server.
+// ACTION_GATT_DISCONNECTED: disconnected from a GATT server.
+// ACTION_GATT_SERVICES_DISCOVERED: discovered GATT services.
+// ACTION_DATA_AVAILABLE: received data from the device. This can be a
+// result of read or notification operations.
+    private final BroadcastReceiver gattUpdateReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+            if (BluetoothLEService.ACTION_GATT_CONNECTED.equals(action)) {
+                connected = true;
+                //updateConnectionState(R.string.connected);
+                invalidateOptionsMenu();
+            } else if (BluetoothLEService.ACTION_GATT_DISCONNECTED.equals(action)) {
+                connected = false;
+                //updateConnectionState(R.string.disconnected);
+                invalidateOptionsMenu();
+                //clearUI();
+            } else if (BluetoothLEService.
+                    ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
+                // Show all the supported services and characteristics on the
+                // user interface.
+                //displayGattServices(BluetoothLEService.getSupportedGattServices());
+            } else if (BluetoothLEService.ACTION_DATA_AVAILABLE.equals(action)) {
+                //displayData(intent.getStringExtra(BluetoothLEService.EXTRA_DATA));
+                Log.i(TAG, intent.getStringExtra(BluetoothLEService.EXTRA_DATA));
+            }
+        }
+    };
 
     //////////////////////////////////////////////////////////////////
     //                                                              //
@@ -70,72 +111,6 @@ public class MainActivity extends AppCompatActivity {
     //                                                              //
     //////////////////////////////////////////////////////////////////
 
-    private final BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
-        @Override
-        public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
-            super.onConnectionStateChange(gatt, status, newState);
-            gatt.discoverServices();
-
-            Log.i(TAG, "connection state changed called");
-
-        }
-
-        @Override
-        public void onServicesDiscovered(BluetoothGatt gatt, int status){
-            super.onServicesDiscovered(gatt, status);
-            BluetoothGattCharacteristic myCharacteristic = gatt.getService(myServiceUUID).getCharacteristic(myCharacteristicUUID);
-            gatt.setCharacteristicNotification(myCharacteristic, true);
-
-            BluetoothGattDescriptor desc = myCharacteristic.getDescriptor(CONFIG_DESCRIPTOR);
-            desc.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE);
-            gatt.writeDescriptor(desc);
-        }
-
-        @Override
-        public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
-            super.onCharacteristicChanged(gatt, characteristic);
-
-            //Log.i(TAG, Arrays.toString(characteristic.getValue()));
-            String incomingData = new String(characteristic.getValue(), StandardCharsets.UTF_8);
-            //Log.i(TAG, incomingData);
-            parseNewData(incomingData);
-            runOnUiThread(new Runnable() {
-
-                @Override
-                public void run() {
-                    updateUIData();
-                    // Stuff that updates the UI
-                }
-            });
-        }
-
-        @Override
-        public void onReadRemoteRssi(BluetoothGatt gatt, int rssi, int status) {
-            super.onReadRemoteRssi(gatt, rssi, status);
-            Log.i(TAG, String.valueOf(rssi));
-        }
-
-
-    };
-
-
-    //prints the result of the scan
-    private ScanCallback scanCallback = new ScanCallback() {
-        @Override
-        public void onScanResult(int callbackType, ScanResult result) {
-            super.onScanResult(callbackType, result);
-            Log.i(TAG, "device found");
-            if (device == null){
-                device = result.getDevice();
-                bluetoothLeScanner.stopScan(scanCallback);
-                bluetoothLeScanner.flushPendingScanResults(scanCallback);
-                Log.i(TAG, device.toString());
-
-                Log.i(TAG, "device created");
-                deviceGatt = device.connectGatt(null, true, gattCallback);
-            }
-        }
-    };
 
     //////////////////////////////////////////////////////////////////
     //                                                              //
@@ -151,41 +126,54 @@ public class MainActivity extends AppCompatActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         //enables UI components
-        leftFrontTemp = (TextView) findViewById(R.id.leftFrontTemp);
-        rightFrontTemp = (TextView) findViewById(R.id.rightFrontTemp);
-        leftRearTemp = (TextView) findViewById(R.id.leftRearTemp);
-        rightRearTemp = (TextView) findViewById(R.id.rightRearTemp);
-        lfBatt = (ImageView) findViewById(R.id.lfBatt);
-        rfBatt = (ImageView) findViewById(R.id.rfBatt);
-        lrBatt = (ImageView) findViewById(R.id.lrBatt);
-        rrBatt = (ImageView) findViewById(R.id.rrBatt);
+        lfBatt = (ProgressBar) findViewById(R.id.lfBatt);
+        rfBatt = (ProgressBar) findViewById(R.id.rfBatt);
+        lrBatt = (ProgressBar) findViewById(R.id.lrBatt);
+        rrBatt = (ProgressBar) findViewById(R.id.rrBatt);
+        lfGauge = (KdGaugeView) findViewById(R.id.lfGauge);
+        rfGauge = (KdGaugeView) findViewById(R.id.rfGauge);
+        lrGauge = (KdGaugeView) findViewById(R.id.lrGauge);
+        rrGauge = (KdGaugeView) findViewById(R.id.rrGauge);
+        statusLed[0] = (Button) findViewById(R.id.lfLed);
+        statusLed[1] = (Button) findViewById(R.id.rfLed);
+        statusLed[2] = (Button) findViewById(R.id.lrLed);
+        statusLed[3] = (Button) findViewById(R.id.rrLed);
 
-        mbluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
-        mbluetoothAdapter = mbluetoothManager.getAdapter();
-        //GattServerActivity server = new GattServerActivity();
-        //server.onCreate(savedInstanceState);
-        Log.i(TAG, "yeet");
-
-        if (mbluetoothAdapter == null || !mbluetoothAdapter.isEnabled()){
-            Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-        }
-
-       scanLeDevice();
-
+        Intent leServiceIntent = new Intent(this, BluetoothLEService.class);
+        bindService(leServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
+        startService(leServiceIntent);
     }
 
     @Override
-    protected void onDestroy(){
-        super.onDestroy();
+    protected void onResume() {
+        super.onResume();
+        registerReceiver(gattUpdateReceiver, makeGattUpdateIntentFilter());
+        if (mBluetoothLEService != null) {
 
-            if (deviceGatt == null) {
-                return;
-            }
-            deviceGatt.close();
-            deviceGatt = null;
+            //TODO: replace with handler for received data
+        }
+    }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.options_menu, menu);
+        return true;
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.control_panel:
+                startActivity(new Intent(this, ControlPanelActivity.class));
+                return true;
+            case R.id.appearance:
+                return true;
+            case R.id.datalog:
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     ///////////////////////////////////////////////////////////////
@@ -194,116 +182,105 @@ public class MainActivity extends AppCompatActivity {
     //                                                           //
     ///////////////////////////////////////////////////////////////
 
-    private void scanLeDevice(){
-        Log.i(TAG, "attempting to scan");
-        final long SCAN_PERIOD = 5000;
-
-        List<ScanFilter> filters = new ArrayList<ScanFilter>();
-        ScanFilter filter = new ScanFilter.Builder()
-                .setServiceUuid(pServiceUUID)
-
-                .build();
-
-        ScanSettings scanSettings = new ScanSettings.Builder()
-                .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
-                .build();
-
-        filters.add(filter);
-
-        bluetoothLeScanner.startScan(filters, scanSettings, scanCallback);       //need to create scan filter and settings
-        Log.i(TAG, "scan started");
-            // Stops scanning after a pre-defined scan period.
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mScanning = false;
-                    bluetoothLeScanner.stopScan(scanCallback);
-                }
-            }, SCAN_PERIOD);
-
-
-
+    //parses incoming string into arrays of ints and divides them into individual positions
+    private void parseNewData(String newData) {
+        try {
+            String[] parts = newData.split("i");            //index, temp, batt
+            //Log.i(TAG, parts[0]);              //debugging
+            for (int i = 0; i < parts.length; i++) {
+                incomingDataInt[i] = Integer.parseInt(parts[i]);
+            }
+            //Log.i(TAG, "incoming data: " + incomingDataInt[0]);
+            switch (incomingDataInt[0]) {
+                case 1:
+                    lfData = incomingDataInt.clone();
+                    break;
+                case 2:
+                    rfData = incomingDataInt.clone();
+                    break;
+                case 3:
+                    lrData = incomingDataInt.clone();
+                    break;
+                case 4:
+                    rrData = incomingDataInt.clone();
+                    break;
+                case 5:
+                    lcData = incomingDataInt.clone();
+                    break;
+                case 6:
+                    rcData = incomingDataInt.clone();
+                    break;
+            }
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
     }
 
-    //parses incoming string into arrays of ints and divides them into individual positions
-    private void parseNewData(String newData){
-        String[] parts = newData.split("i");            //index, temp, batt
+    private void parseMessageData(String msgData) {
+        String[] parts = msgData.split("i");            //index, temp, batt
         //Log.i(TAG, parts[0]);              //debugging
-        for (int i = 0; i < 3; i++) {
-            incomingDataInt[i] = Integer.parseInt(parts[i]);
+        for (int i = 0; i < parts.length; i++) {
+            incomingMsgInt[i] = Integer.parseInt(parts[i]);
         }
-        Log.i(TAG, "incoming data: " + incomingDataInt[0]);
-        switch (incomingDataInt[0]){
-            case 1:
-                lfData =  incomingDataInt.clone();
-                Log.i(TAG, String.valueOf(lfData[1]));
-                Log.i(TAG, String.valueOf(rfData[1]));
-                Log.i(TAG, String.valueOf(lrData[1]));
-                Log.i(TAG, String.valueOf(rrData[1]));
-                break;
-            case 2:
-                rfData = incomingDataInt.clone();
-                Log.i(TAG, String.valueOf(lfData[1]));
-                Log.i(TAG, String.valueOf(rfData[1]));
-                Log.i(TAG, String.valueOf(lrData[1]));
-                Log.i(TAG, String.valueOf(rrData[1]));
-                break;
-            case 3:
-                lrData = incomingDataInt.clone();
-                Log.i(TAG, String.valueOf(lfData[1]));
-                Log.i(TAG, String.valueOf(rfData[1]));
-                Log.i(TAG, String.valueOf(lrData[1]));
-                Log.i(TAG, String.valueOf(rrData[1]));
-                break;
-            case 4:
-                rrData = incomingDataInt.clone();
-                Log.i(TAG, String.valueOf(lfData[1]));
-                Log.i(TAG, String.valueOf(rfData[1]));
-                Log.i(TAG, String.valueOf(lrData[1]));
-                Log.i(TAG, String.valueOf(rrData[1]));
-                break;
-            case 5:
-                lcData = incomingDataInt.clone();
-                break;
-            case 6:
-                rcData = incomingDataInt.clone();
-                break;
+        for (int i = 0; i < sensorsExpected; i++) {
+            setLedColor(statusLed[i], incomingMsgInt[i]);
         }
+/*
+        lfStatus = incomingMsgInt[0];
+        rfStatus = incomingMsgInt[1];
+        lrStatus = incomingMsgInt[2];
+        rrStatus = incomingMsgInt[3];
+        lcStatus = incomingMsgInt[4];
+        rcStatus = incomingMsgInt[5];
+
+ */
+        sensorsConnected = incomingMsgInt[6];
     }
 
     //updates all UI info
-    private void updateUIData(){
+    void updateUIData() {
         //updates temp
-        leftFrontTemp.setText(String.valueOf(lfData[1]));
-        rightFrontTemp.setText(String.valueOf(rfData[1]));
-        leftRearTemp.setText(String.valueOf(lrData[1]));
-        rightRearTemp.setText(String.valueOf(rrData[1]));
-
-        //shows battery low icon if batt < 20%
-        if (lfData[2] < 20){
-            lfBatt.setVisibility(View.VISIBLE);
-        }
-        else lfBatt.setVisibility(View.INVISIBLE);
-
-        if (rfData[2] < 20){
-            rfBatt.setVisibility(View.VISIBLE);
-        }
-        else rfBatt.setVisibility(View.INVISIBLE);
-
-        if (lrData[2] < 20){
-            lrBatt.setVisibility(View.VISIBLE);
-        }
-        else lrBatt.setVisibility(View.INVISIBLE);
-
-        if (rrData[2] < 20){
-            rrBatt.setVisibility(View.VISIBLE);
-        }
-        else rrBatt.setVisibility(View.INVISIBLE);
-
+        lfGauge.setSpeed(lfData[1]);
+        rfGauge.setSpeed(rfData[1]);
+        lrGauge.setSpeed(lrData[1]);
+        rrGauge.setSpeed(rrData[1]);
+        lfBatt.setProgress(lfData[2]);
+        rfBatt.setProgress(rfData[2]);
+        lrBatt.setProgress(lrData[2]);
+        rrBatt.setProgress(rrData[2]);
 
 
     }
 
+    private void setLedColor(final Button b, final int status) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                switch (status) {
+                    case 0:
+                        b.setBackgroundTintList(ColorStateList.valueOf(Color.GRAY));
+                        break;
+                    case 1:
+                        b.setBackgroundTintList(ColorStateList.valueOf(Color.GREEN));
+                        break;
+                    case 2:
+                        b.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
+                        break;
+                    case 3:
+                        b.setBackgroundTintList(ColorStateList.valueOf(Color.YELLOW));
+                        break;
+                }
 
-
+                Log.i(TAG, "color change called");
+            }
+        });
+    }
+    private static IntentFilter makeGattUpdateIntentFilter() {
+        final IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(BluetoothLEService.ACTION_GATT_CONNECTED);
+        intentFilter.addAction(BluetoothLEService.ACTION_GATT_DISCONNECTED);
+        intentFilter.addAction(BluetoothLEService.ACTION_GATT_SERVICES_DISCOVERED);
+        intentFilter.addAction(BluetoothLEService.ACTION_DATA_AVAILABLE);
+        return intentFilter;
+    }
 }

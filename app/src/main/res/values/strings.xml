@@ -2,9 +2,54 @@
     <string name="app_name">Brake Sensor</string>
 
     <string name="bleOn">Bluetooth</string>
-    <string name="leftFrontTemp">LeftFrontTemp</string>
-    <string name="rightFrontTemp">RightFrontTemp</string>
-    <string name="leftRearTemp">LeftRearTemp</string>
-    <string name="rightRearTemp">RightRearTemp</string>
+    <string name="leftFrontTemp">LF</string>
+    <string name="rightFrontTemp">RF</string>
+    <string name="leftRearTemp">LR</string>
+    <string name="rightRearTemp">RR</string>
+    <string name="bluetooth">Bluetooth</string>
+    <string name="control_panel">Control Panel</string>
+    <string name="datalogging">Datalogging</string>
+    <string name="appearance">Appearance</string>
+    <string name="title_activity_control_panel">ControlPanelActivity</string>
+
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="server_reset">Server Reset</string>
+    <string name="client_hardware_reset">Client Hardware Reset</string>
+    <string name="client_software_reset">Client Software Reset</string>
+    <string name="axles">Axles</string>
+    <string name="get_mac_addresses">Get MAC Addresses</string>
+    <string name="force_scan">Force Scan</string>
+    <string name="textview">TextView</string>
+    <string name="sleep_all">Sleep All</string>
+    <string name="sleep_sensor">Sleep Sensor</string>
+    <string name="reset">Reset</string>
+    <string name="_1">1</string>
+    <string name="_2">2</string>
+    <string name="_3">3</string>
+    <string name="save">Save</string>
+    <string name="sleep">Sleep</string>
+    <string name="scan">Scan</string>
+
+    <string-array name="posit_array">
+        <item>LF</item>
+        <item>RF</item>
+        <item>LC</item>
+        <item>RC</item>
+        <item>LR</item>
+        <item>RR</item>
+    </string-array>
 
 </resources>

@@ -13,6 +13,23 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <service
+            android:name=".BLEScanService"
+            android:enabled="true"
+            android:exported="true"></service>
+        <service
+            android:name=".BluetoothLEService"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity
+            android:name=".ControlPanelActivity"
+            android:label="@string/title_activity_control_panel"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
