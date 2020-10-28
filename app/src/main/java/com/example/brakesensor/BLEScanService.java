@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 /////////////////////////////////////////////////////////////////
 //              Scan should return BLE device to connect to    //
-//              Device or address??                            //
+//              address                                        //
 /////////////////////////////////////////////////////////////////
 
 public class BLEScanService extends Service {

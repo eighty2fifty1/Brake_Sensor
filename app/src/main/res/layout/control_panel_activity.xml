@@ -27,7 +27,8 @@
                 android:layout_height="match_parent"
                 android:layout_marginEnd="32dp"
                 android:layout_marginBottom="16dp"
-                android:text="@string/axles" />
+                android:text="@string/axles"
+                android:textAlignment="textEnd" />
 
             <RadioGroup
                 android:id="@+id/axle_group"
@@ -41,6 +42,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:tag="1"
                     android:text="@string/_1" />
 
                 <RadioButton
@@ -48,6 +50,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:tag="2"
                     android:text="@string/_2" />
 
                 <RadioButton
@@ -55,6 +58,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:tag="3"
                     android:text="@string/_3" />
             </RadioGroup>
 
@@ -78,7 +82,8 @@
                 android:layout_height="match_parent"
                 android:layout_marginEnd="32dp"
                 android:layout_marginBottom="32dp"
-                android:text="@string/server_reset" />
+                android:text="@string/server_reset"
+                android:textAlignment="textEnd" />
 
             <Button
                 android:id="@+id/btnServerReset"
@@ -99,7 +104,8 @@
                 android:layout_height="match_parent"
                 android:layout_marginEnd="32dp"
                 android:layout_marginBottom="32dp"
-                android:text="@string/client_software_reset" />
+                android:text="@string/client_software_reset"
+                android:textAlignment="textEnd" />
 
             <Button
                 android:id="@+id/btnSWReset"
@@ -120,7 +126,8 @@
                 android:layout_height="match_parent"
                 android:layout_marginEnd="32dp"
                 android:layout_marginBottom="32dp"
-                android:text="@string/client_hardware_reset" />
+                android:text="@string/client_hardware_reset"
+                android:textAlignment="textEnd" />
 
             <Button
                 android:id="@+id/btnHWReset"
@@ -141,7 +148,8 @@
                 android:layout_height="match_parent"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="32dp"
-                android:text="@string/get_mac_addresses" />
+                android:text="@string/get_mac_addresses"
+                android:textAlignment="textEnd" />
 
             <Button
                 android:id="@+id/btnGetMAC"
@@ -163,7 +171,7 @@
                 android:layout_marginTop="32dp"
                 android:layout_marginEnd="32dp"
                 android:text="@string/sleep_sensor"
-                android:textAlignment="viewEnd" />
+                android:textAlignment="textEnd" />
 
             <Spinner
                 android:id="@+id/sensor_posit_spinner"
@@ -191,7 +199,7 @@
                 android:layout_marginTop="32dp"
                 android:layout_marginEnd="32dp"
                 android:text="@string/sleep_all"
-                />
+                android:textAlignment="textEnd" />
 
             <Button
                 android:id="@+id/btnSleepAll"

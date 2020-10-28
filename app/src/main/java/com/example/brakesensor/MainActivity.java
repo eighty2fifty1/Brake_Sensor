@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import in.unicodelabs.kdgaugeview.KdGaugeView;
 
@@ -32,6 +34,9 @@ import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
+    //private Context context = this;
+    public static SharedPreferences sharedPrefs;
+    public static SharedPreferences.Editor editor;
     private boolean connected = false;
     public static BluetoothLEService mBluetoothLEService;
     public static Intent leServiceIntent;
@@ -49,7 +54,8 @@ public class MainActivity extends AppCompatActivity {
     private int lfStatus, rfStatus, lrStatus, rrStatus, lcStatus, rcStatus, sensorsConnected;
     //ints for outgoing message
     private int serverReset, hardwareResetClient, softwareResetClient, macRequest, forceScan, sensorSleep;
-    private int sensorsExpected = 4;
+    private int defaultSensors = 4;
+    public static int sensorsExpected;
 
     private TextView leftFrontTemp, rightFrontTemp, leftRearTemp, rightRearTemp, leftCenterTemp, rightCenterTemp;
     private ProgressBar lfBatt, rfBatt, lrBatt, rrBatt, lcBatt, rcBatt;
@@ -107,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.i(TAG, "something received" + intent.getStringExtra(BluetoothLEService.EXTRA_DATA));
                 serverAddress = intent.getStringExtra(BluetoothLEService.EXTRA_DATA);
             } else if (BluetoothLEService.TEMP_DATA.equals(action)) {
-                Log.i(TAG,"tempdata received: " + intent.getStringExtra(BluetoothLEService.EXTRA_DATA));
+                //Log.i(TAG,"tempdata received: " + intent.getStringExtra(BluetoothLEService.EXTRA_DATA));
                 parseNewData(intent.getStringExtra(BluetoothLEService.EXTRA_DATA));
             } else if (BluetoothLEService.STATUS_DATA.equals(action)) {
                 Log.i(TAG, "status data received: " + intent.getStringExtra(BluetoothLEService.EXTRA_DATA));
@@ -137,6 +143,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        sharedPrefs = getPreferences(Context.MODE_PRIVATE);
+        editor = sharedPrefs.edit();
+        sensorsExpected = sharedPrefs.getInt(String.valueOf(R.integer.sensors_expected), defaultSensors);
 
         //enables UI components
         lfBatt = (ProgressBar) findViewById(R.id.lfBatt);
@@ -271,27 +280,31 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setLedColor(final Button b, final int status) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                switch (status) {
-                    case 0:
-                        b.setBackgroundTintList(ColorStateList.valueOf(Color.GRAY));
-                        break;
-                    case 1:
-                        b.setBackgroundTintList(ColorStateList.valueOf(Color.GREEN));
-                        break;
-                    case 2:
-                        b.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
-                        break;
-                    case 3:
-                        b.setBackgroundTintList(ColorStateList.valueOf(Color.YELLOW));
-                        break;
-                }
+        try {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    switch (status) {
+                        case 0:
+                            b.setBackgroundTintList(ColorStateList.valueOf(Color.GRAY));
+                            break;
+                        case 1:
+                            b.setBackgroundTintList(ColorStateList.valueOf(Color.GREEN));
+                            break;
+                        case 2:
+                            b.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
+                            break;
+                        case 3:
+                            b.setBackgroundTintList(ColorStateList.valueOf(Color.YELLOW));
+                            break;
+                    }
 
-                Log.i(TAG, "color change called");
-            }
-        });
+                    Log.i(TAG, "color change called");
+                }
+            });
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
     }
     private static IntentFilter makeGattUpdateIntentFilter() {
         final IntentFilter intentFilter = new IntentFilter();
@@ -302,5 +315,9 @@ public class MainActivity extends AppCompatActivity {
         intentFilter.addAction(BluetoothLEService.TEMP_DATA);
         intentFilter.addAction(BluetoothLEService.STATUS_DATA);
         return intentFilter;
+    }
+
+    public void displayStats(View view) {
+        Toast.makeText(this, view.toString(), Toast.LENGTH_LONG).show();
     }
 }
