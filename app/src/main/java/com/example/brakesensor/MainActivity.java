@@ -33,7 +33,8 @@ import java.util.UUID;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
     private boolean connected = false;
-    private BluetoothLEService mBluetoothLEService;
+    public static BluetoothLEService mBluetoothLEService;
+    public static Intent leServiceIntent;
     private int[] incomingDataInt = new int[3];
     private int[] lfData = new int[3];
     private int[] rfData = new int[3];
@@ -41,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
     private int[] rrData = new int[3];
     private int[] lcData = new int[3];
     private int[] rcData = new int[3];
+
+    private static String serverAddress;
     //ints for incoming message
     private int[] incomingMsgInt = new int[7];
     private int lfStatus, rfStatus, lrStatus, rrStatus, lcStatus, rcStatus, sensorsConnected;
@@ -54,14 +57,14 @@ public class MainActivity extends AppCompatActivity {
     private Button[] statusLed = new Button[6];
 
 
-    private final ServiceConnection mServiceConnection = new ServiceConnection() {
+    public static final ServiceConnection mServiceConnection = new ServiceConnection() {
 
         @Override
         public void onServiceConnected(ComponentName componentName, IBinder service) {
             mBluetoothLEService = ((BluetoothLEService.LocalBinder) service).getService();
             if (!mBluetoothLEService.initialize()) {
                 Log.e(TAG, "Unable to initialize Bluetooth");
-                finish();
+                //finish();
             }
             // Automatically connects to the device upon successful start-up initialization.
             //mBluetoothLEService.connect(mDeviceAddress);
@@ -69,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
+            Log.i(TAG, "onservicedisconnected called ln 75");
             mBluetoothLEService = null;
         }
     };
@@ -100,8 +104,17 @@ public class MainActivity extends AppCompatActivity {
                 //displayGattServices(BluetoothLEService.getSupportedGattServices());
             } else if (BluetoothLEService.ACTION_DATA_AVAILABLE.equals(action)) {
                 //displayData(intent.getStringExtra(BluetoothLEService.EXTRA_DATA));
-                Log.i(TAG, intent.getStringExtra(BluetoothLEService.EXTRA_DATA));
+                Log.i(TAG, "something received" + intent.getStringExtra(BluetoothLEService.EXTRA_DATA));
+                serverAddress = intent.getStringExtra(BluetoothLEService.EXTRA_DATA);
+            } else if (BluetoothLEService.TEMP_DATA.equals(action)) {
+                Log.i(TAG,"tempdata received: " + intent.getStringExtra(BluetoothLEService.EXTRA_DATA));
+                parseNewData(intent.getStringExtra(BluetoothLEService.EXTRA_DATA));
+            } else if (BluetoothLEService.STATUS_DATA.equals(action)) {
+                Log.i(TAG, "status data received: " + intent.getStringExtra(BluetoothLEService.EXTRA_DATA));
+                parseMessageData(intent.getStringExtra(BluetoothLEService.EXTRA_DATA));
+
             }
+            updateUIData();
         }
     };
 
@@ -139,8 +152,8 @@ public class MainActivity extends AppCompatActivity {
         statusLed[2] = (Button) findViewById(R.id.lrLed);
         statusLed[3] = (Button) findViewById(R.id.rrLed);
 
-        Intent leServiceIntent = new Intent(this, BluetoothLEService.class);
-        bindService(leServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
+        leServiceIntent = new Intent(this, BluetoothLEService.class);
+        //bindService(leServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
         startService(leServiceIntent);
     }
 
@@ -148,10 +161,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         registerReceiver(gattUpdateReceiver, makeGattUpdateIntentFilter());
-        if (mBluetoothLEService != null) {
+        //bindService(leServiceIntent, mServiceConnection, BIND_ABOVE_CLIENT);
 
-            //TODO: replace with handler for received data
-        }
     }
 
     @Override
@@ -174,6 +185,13 @@ public class MainActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        //unbindService(mServiceConnection);
+        unregisterReceiver(gattUpdateReceiver);
     }
 
     ///////////////////////////////////////////////////////////////
@@ -281,6 +299,8 @@ public class MainActivity extends AppCompatActivity {
         intentFilter.addAction(BluetoothLEService.ACTION_GATT_DISCONNECTED);
         intentFilter.addAction(BluetoothLEService.ACTION_GATT_SERVICES_DISCOVERED);
         intentFilter.addAction(BluetoothLEService.ACTION_DATA_AVAILABLE);
+        intentFilter.addAction(BluetoothLEService.TEMP_DATA);
+        intentFilter.addAction(BluetoothLEService.STATUS_DATA);
         return intentFilter;
     }
 }

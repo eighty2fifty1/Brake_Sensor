@@ -42,6 +42,7 @@
     <string name="save">Save</string>
     <string name="sleep">Sleep</string>
     <string name="scan">Scan</string>
+    <string name="get">Get</string>
 
     <string-array name="posit_array">
         <item>LF</item>

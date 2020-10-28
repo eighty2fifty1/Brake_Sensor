@@ -1,19 +1,23 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/linearLayout"
+    android:id="@+id/linear_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
 
     <TableLayout
-        android:layout_width="387dp"
-        android:layout_height="671dp"
-        tools:layout_editor_absoluteX="107dp"
-        tools:layout_editor_absoluteY="146dp">
+        android:id="@+id/table_layout"
+        android:layout_width="431dp"
+        android:layout_height="385dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <TableRow
+            android:id="@+id/row1"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -26,6 +30,7 @@
                 android:text="@string/axles" />
 
             <RadioGroup
+                android:id="@+id/axle_group"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checkedButton="@id/rb2"
@@ -57,11 +62,13 @@
                 android:id="@+id/btnSaveAxle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/save" />
+                android:text="@string/save"
+                android:onClick="setAxles"/>
 
         </TableRow>
 
         <TableRow
+            android:id="@+id/row2"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -77,10 +84,12 @@
                 android:id="@+id/btnServerReset"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/reset" />
+                android:text="@string/reset"
+                android:onClick="resetServer"/>
         </TableRow>
 
         <TableRow
+            android:id="@+id/row3"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -96,10 +105,12 @@
                 android:id="@+id/btnSWReset"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/reset" />
+                android:text="@string/reset"
+                android:onClick="clientSWReset"/>
         </TableRow>
 
         <TableRow
+            android:id="@+id/row4"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -115,10 +126,12 @@
                 android:id="@+id/btnHWReset"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/reset" />
+                android:text="@string/reset"
+                android:onClick="clientHWReset"/>
         </TableRow>
 
         <TableRow
+            android:id="@+id/row5"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -134,10 +147,12 @@
                 android:id="@+id/btnGetMAC"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Get" />
+                android:text="@string/get"
+                android:onClick="getMACAddress"/>
         </TableRow>
 
         <TableRow
+            android:id="@+id/row6"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -151,7 +166,7 @@
                 android:textAlignment="viewEnd" />
 
             <Spinner
-                android:id="@+id/spinner2"
+                android:id="@+id/sensor_posit_spinner"
                 android:layout_width="85dp"
                 android:layout_height="43dp"
                 android:entries="@array/posit_array" />
@@ -160,10 +175,12 @@
                 android:id="@+id/btnSleep"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/sleep" />
+                android:text="@string/sleep"
+                android:onClick="sleepSensor"/>
         </TableRow>
 
         <TableRow
+            android:id="@+id/row7"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -173,16 +190,19 @@
                 android:layout_height="match_parent"
                 android:layout_marginTop="32dp"
                 android:layout_marginEnd="32dp"
-                android:text="@string/sleep_all" />
+                android:text="@string/sleep_all"
+                />
 
             <Button
                 android:id="@+id/btnSleepAll"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Sleep All" />
+                android:text="@string/sleep_all"
+                android:onClick="sleepAll"/>
         </TableRow>
 
         <TableRow
+            android:id="@+id/row8"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -199,7 +219,8 @@
                 android:id="@+id/btnScan"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/scan" />
+                android:text="@string/scan"
+                android:onClick="forceScan"/>
         </TableRow>
 
     </TableLayout>

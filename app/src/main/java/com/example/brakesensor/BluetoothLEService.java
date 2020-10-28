@@ -40,6 +40,8 @@ public class BluetoothLEService extends Service {
             "com.example.bluetooth.le.ACTION_DATA_AVAILABLE";
     public final static String EXTRA_DATA =
             "com.example.bluetooth.le.EXTRA_DATA";
+    public final static String TEMP_DATA = "temp_data";
+    public final static String STATUS_DATA = "status_data";
     private static final int STATE_DISCONNECTED = 0;
     private static final int STATE_CONNECTING = 1;
     private static final int STATE_CONNECTED = 2;
@@ -52,14 +54,16 @@ public class BluetoothLEService extends Service {
     private BluetoothAdapter mBluetoothAdapter = null;
 
     private String mBluetoothDeviceAddress;
+    private String action;
 
-    protected BluetoothGatt deviceGatt;
+    protected static BluetoothGatt deviceGatt;
     private BluetoothDevice device = null;
 
     private boolean mScanning = false;
     private boolean connected = false;
     private Handler handler = new Handler();
     private BLEScanService scanner;
+    private Intent scannerIntent;
 
     private int mConnectionState = STATE_DISCONNECTED;
 
@@ -77,8 +81,7 @@ public class BluetoothLEService extends Service {
         Log.i(TAG, "yeet");
 
 
-        Intent scannerIntent = new Intent(this, BLEScanService.class);
-        // TODO: Change scan to return device to connect to
+        scannerIntent = new Intent(this, BLEScanService.class);
         // TODO: make scanner and connecting operate with switch on UI
         registerReceiver(scanResultReceiver, makeScanResultIntentFilter());
 
@@ -89,7 +92,7 @@ public class BluetoothLEService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-
+        Log.i(TAG, "destroying BLE service");
         if (deviceGatt == null) {
             return;
         }
@@ -105,12 +108,16 @@ public class BluetoothLEService extends Service {
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
             super.onConnectionStateChange(gatt, status, newState);
             if (newState == BluetoothProfile.STATE_CONNECTED) {
-                gatt.discoverServices();
-            }
+                if (gatt.discoverServices()){
+                    Log.i(TAG, "stopping scan service");
+                    stopService(scannerIntent);                 //stops service once gatt is connected.  doing it to clean up unnecessary services.  not sure if needed
+            }}
 
             if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 Log.i(TAG, "disconnected.  scanning...");
+                connected = false;
                 scanner.scanLeDevice();
+
             }
 
             Log.i(TAG, "connection state changed called");
@@ -134,8 +141,6 @@ public class BluetoothLEService extends Service {
                 indicateDesc.setValue(BluetoothGattDescriptor.ENABLE_INDICATION_VALUE);
                 gatt.writeDescriptor(indicateDesc);
 
-                // TODO: figure out how to parse notifications by UUID
-                //broadcastUpdate(ACTION_GATT_SERVICES_DISCOVERED, );
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }
@@ -144,7 +149,15 @@ public class BluetoothLEService extends Service {
         //called when characteristic changed
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
-            broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic);
+            if (MyUUID.myCharacteristicUUID.equals(characteristic.getUuid())){
+                action = TEMP_DATA;
+            }
+            else if (MyUUID.msgCharacteristicUUID.equals(characteristic.getUuid())){
+                action = STATUS_DATA;
+            }
+            if (action != null) {
+                broadcastUpdate(action, characteristic);
+            }
         }
 
         @Override
@@ -162,28 +175,6 @@ public class BluetoothLEService extends Service {
 
         String incomingData = new String(characteristic.getValue(), StandardCharsets.UTF_8);
         intent.putExtra(EXTRA_DATA, incomingData);
-
-        /* may not be necessary
-        if (myCharacteristicUUID.equals(characteristic.getUuid())) {
-            String incomingData = new String(characteristic.getValue(), StandardCharsets.UTF_8);
-            intent.putExtra(EXTRA_DATA, incomingData);
-        }
-
-        else if (msgCharacteristicUUID.equals(characteristic.getUuid())){
-
-        }
-        else {
-            // For all other profiles, writes the data formatted in HEX.
-            final byte[] data = characteristic.getValue();
-            if (data != null && data.length > 0) {
-                final StringBuilder stringBuilder = new StringBuilder(data.length);
-                for(byte byteChar : data)
-                    stringBuilder.append(String.format("%02X ", byteChar));
-                intent.putExtra(EXTRA_DATA, new String(data) + "\n" +
-                        stringBuilder.toString());
-            }
-        }
-         */
         sendBroadcast(intent);
     }
 
@@ -197,8 +188,10 @@ public class BluetoothLEService extends Service {
         @Override
         public void onReceive(Context context, Intent intent) {
             final String action = intent.getAction();
-            if (BluetoothLEService.ACTION_DATA_AVAILABLE.equals(action) && !connected) {
+            Log.i(TAG, "scan result received " + intent.getStringExtra(BluetoothLEService.EXTRA_DATA));
 
+            if (BluetoothLEService.ACTION_DATA_AVAILABLE.equals(action) && !connected) {
+                Log.i(TAG, "scan result received " + intent.getStringExtra(BluetoothLEService.EXTRA_DATA));
                 connected = connect(intent.getStringExtra(BluetoothLEService.EXTRA_DATA));
             }
         }
@@ -220,6 +213,7 @@ public class BluetoothLEService extends Service {
     @Override
     public boolean onUnbind(Intent intent){
         close();
+        Log.i(TAG,"unbinding BLE Service");
         return super.onUnbind(intent);
     }
 
@@ -244,7 +238,6 @@ public class BluetoothLEService extends Service {
 
     }
 
-    //TODO: connect should get called after scan returns item
     public boolean connect(final String address){
         if (mBluetoothAdapter == null && address.equals(mBluetoothDeviceAddress) && deviceGatt != null){
             Log.d(TAG, "Trying existing gatt");
@@ -290,6 +283,7 @@ public class BluetoothLEService extends Service {
         intentFilter.addAction(BLEScanService.ACTION_GATT_DISCONNECTED);
         intentFilter.addAction(BLEScanService.ACTION_GATT_SERVICES_DISCOVERED);
         intentFilter.addAction(BLEScanService.ACTION_DATA_AVAILABLE);
+
         return intentFilter;
     }
 

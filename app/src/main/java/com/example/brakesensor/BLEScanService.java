@@ -60,7 +60,6 @@ public class BLEScanService extends Service {
     //scan device.  item is returned in scan callback
     void scanLeDevice() {
         Log.i(TAG, "attempting to scan");
-        final long SCAN_PERIOD = 5000;
 
         List<ScanFilter> filters = new ArrayList<ScanFilter>();
         ScanFilter filter = new ScanFilter.Builder()
@@ -86,7 +85,6 @@ public class BLEScanService extends Service {
 
 
     }
-
 
     //prints the result of the scan
     private ScanCallback scanCallback = new ScanCallback() {
@@ -118,7 +116,6 @@ public class BLEScanService extends Service {
     }
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
     }
 }
