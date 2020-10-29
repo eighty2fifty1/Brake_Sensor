@@ -72,12 +72,14 @@ public class DatabaseTable {
 
         private void loadWords() throws IOException {
             final Resources resources = helperContext.getResources();
-            InputStream inputStream = resources.openRawResource(R.raw.saved_sensor_data);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            //InputStream inputStream = resources.openRawResource(R.raw.saved_sensor_data);
+            //BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
             try{
                 String line;
-                while ((line))
+            }
+            catch (Exception e){
+                e.printStackTrace();
             }
         }
     }

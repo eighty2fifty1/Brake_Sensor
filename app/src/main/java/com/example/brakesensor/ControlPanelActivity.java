@@ -5,8 +5,10 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.RadioGroup;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceFragmentCompat;
+
 import com.example.brakesensor.databinding.ControlPanelActivityBinding;
 
 
@@ -71,7 +73,7 @@ public class ControlPanelActivity extends AppCompatActivity {
                 break;
         }
         MainActivity.editor.putInt(String.valueOf(R.integer.sensors_expected), MainActivity.sensorsExpected);
-        if (MainActivity.editor.commit()){
+        if (MainActivity.editor.commit()) {
             Log.i(TAG, "sensors saved");
         }
     }
@@ -129,12 +131,16 @@ public class ControlPanelActivity extends AppCompatActivity {
     }
 
     public void sendMessage(String msg) {
-        characteristic = BluetoothLEService.deviceGatt.getService(MyUUID.msgServiceUUID).getCharacteristic(MyUUID.msgCharacteristicUUID);
-        //Log.i("TAG", String.valueOf(characteristic));
-        characteristic.setValue(msg);
+        try {
+            characteristic = BluetoothLEService.deviceGatt.getService(MyUUID.msgServiceUUID).getCharacteristic(MyUUID.msgCharacteristicUUID);
+            //Log.i("TAG", String.valueOf(characteristic));
+            characteristic.setValue(msg);
 
-        if (BluetoothLEService.deviceGatt.writeCharacteristic(characteristic)) {
-            Log.i(TAG, "msg sent: " + msg);
+            if (BluetoothLEService.deviceGatt.writeCharacteristic(characteristic)) {
+                Log.i(TAG, "msg sent: " + msg);
+            }
+        } catch (NullPointerException e) {
+            e.printStackTrace();
         }
     }
 

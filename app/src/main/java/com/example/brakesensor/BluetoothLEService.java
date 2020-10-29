@@ -288,3 +288,15 @@ public class BluetoothLEService extends Service {
     }
 
 }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//
+//              Incoming status message format
+// [left front status]i[right front status]i[left rear status]i[rt rear status]i[left center status]i[rt center status]i[sensors connected]
+//
+//  status: 0 = not connected
+//          1 = connected
+//          2 = timed out (notification not received in 10 seconds, probably due to disconnect
+//          3 = sleep (sensor turned off due to tilt switch or command sleep)
+//
+/////////////////////////////////////////////////////////////////////////////////////////////////////

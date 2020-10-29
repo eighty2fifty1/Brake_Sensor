@@ -14,9 +14,19 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <service
-            android:name=".BLEScanService"
+            android:name=".NotificationService"
             android:enabled="true"
             android:exported="true"></service>
+
+        <activity
+            android:name=".DataLoggingActivity"
+            android:label="@string/title_activity_data_logging"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <service
+            android:name=".BLEScanService"
+            android:enabled="true"
+            android:exported="true" />
         <service
             android:name=".BluetoothLEService"
             android:enabled="true"

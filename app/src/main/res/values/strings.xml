@@ -43,6 +43,17 @@
     <string name="sleep">Sleep</string>
     <string name="scan">Scan</string>
     <string name="get">Get</string>
+    <string name="overheat">Overheat Warning</string>
+    <string name="low_batt">Low Battery</string>
+    <string name="sensor_disconnect">Sensor Disconnect</string>
+    <string name="repeater_disconnect">Repeater Disconnect</string>
+
+    <string-array name="messages">
+        <item>Overheat Warning</item>
+        <item>Low Battery</item>
+        <item>Sensor Disconnect</item>
+        <item>Repeater Disconnect</item>
+    </string-array>
 
     <string-array name="posit_array">
         <item>LF</item>
@@ -52,5 +63,16 @@
         <item>LR</item>
         <item>RR</item>
     </string-array>
+    <string name="title_activity_data_logging">DataLogging</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="channel_name">Sensor Channel</string>
+    <string name="channel_description">My Channel</string>
 
 </resources>

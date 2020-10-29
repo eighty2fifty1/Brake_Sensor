@@ -53,7 +53,7 @@ public class BLEScanService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId){
         handler = new Handler();
-        scanLeDevice();
+        scanLeDevice();               //TODO uncomment
         return START_NOT_STICKY;
     }
 

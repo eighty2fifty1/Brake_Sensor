@@ -26,6 +26,7 @@ import android.widget.Toast;
 import in.unicodelabs.kdgaugeview.KdGaugeView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import com.example.brakesensor.databinding.ActivityMainBinding;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -37,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
     //private Context context = this;
     public static SharedPreferences sharedPrefs;
     public static SharedPreferences.Editor editor;
+    private Intent notifyServiceIntent;
+    private ActivityMainBinding binding;
+
     private boolean connected = false;
     public static BluetoothLEService mBluetoothLEService;
     public static Intent leServiceIntent;
@@ -47,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
     private int[] rrData = new int[3];
     private int[] lcData = new int[3];
     private int[] rcData = new int[3];
-
     private static String serverAddress;
     //ints for incoming message
     private int[] incomingMsgInt = new int[7];
@@ -59,8 +62,10 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView leftFrontTemp, rightFrontTemp, leftRearTemp, rightRearTemp, leftCenterTemp, rightCenterTemp;
     private ProgressBar lfBatt, rfBatt, lrBatt, rrBatt, lcBatt, rcBatt;
-    private KdGaugeView lfGauge, rfGauge, lrGauge, rrGauge, lcGauge, rcGauge;
+    private KdGaugeView[] tempGauge = new KdGaugeView[6];
     private Button[] statusLed = new Button[6];
+
+    public static int[] hiTempWarn = {200,200,200,200,200,200};
 
 
     public static final ServiceConnection mServiceConnection = new ServiceConnection() {
@@ -141,29 +146,31 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        View view = binding.getRoot();
+        setContentView(view);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         sharedPrefs = getPreferences(Context.MODE_PRIVATE);
         editor = sharedPrefs.edit();
         sensorsExpected = sharedPrefs.getInt(String.valueOf(R.integer.sensors_expected), defaultSensors);
 
         //enables UI components
-        lfBatt = (ProgressBar) findViewById(R.id.lfBatt);
-        rfBatt = (ProgressBar) findViewById(R.id.rfBatt);
-        lrBatt = (ProgressBar) findViewById(R.id.lrBatt);
-        rrBatt = (ProgressBar) findViewById(R.id.rrBatt);
-        lfGauge = (KdGaugeView) findViewById(R.id.lfGauge);
-        rfGauge = (KdGaugeView) findViewById(R.id.rfGauge);
-        lrGauge = (KdGaugeView) findViewById(R.id.lrGauge);
-        rrGauge = (KdGaugeView) findViewById(R.id.rrGauge);
-        statusLed[0] = (Button) findViewById(R.id.lfLed);
-        statusLed[1] = (Button) findViewById(R.id.rfLed);
-        statusLed[2] = (Button) findViewById(R.id.lrLed);
-        statusLed[3] = (Button) findViewById(R.id.rrLed);
+        tempGauge[0] = binding.lfGauge;
+        tempGauge[1] = binding.rfGauge;
+        tempGauge[2] = binding.lrGauge;
+        tempGauge[3] = binding.rrGauge;
+        statusLed[0] = binding.lfLed;
+        statusLed[1] = binding.rfLed;
+        statusLed[2] = binding.lrLed;
+        statusLed[3] = binding.rrLed;
+
+
 
         leServiceIntent = new Intent(this, BluetoothLEService.class);
+        notifyServiceIntent = new Intent(this, NotificationService.class);
         //bindService(leServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
         startService(leServiceIntent);
+        startService(notifyServiceIntent);
     }
 
     @Override
@@ -171,6 +178,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         registerReceiver(gattUpdateReceiver, makeGattUpdateIntentFilter());
         //bindService(leServiceIntent, mServiceConnection, BIND_ABOVE_CLIENT);
+        stopService(notifyServiceIntent);       //should disable notifications while app is running in foreground
 
     }
 
@@ -190,6 +198,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.appearance:
                 return true;
             case R.id.datalog:
+                startActivity(new Intent(this, DataLoggingActivity.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -201,6 +210,7 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
         //unbindService(mServiceConnection);
         unregisterReceiver(gattUpdateReceiver);
+        startService(notifyServiceIntent);
     }
 
     ///////////////////////////////////////////////////////////////
@@ -252,31 +262,21 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < sensorsExpected; i++) {
             setLedColor(statusLed[i], incomingMsgInt[i]);
         }
-/*
-        lfStatus = incomingMsgInt[0];
-        rfStatus = incomingMsgInt[1];
-        lrStatus = incomingMsgInt[2];
-        rrStatus = incomingMsgInt[3];
-        lcStatus = incomingMsgInt[4];
-        rcStatus = incomingMsgInt[5];
 
- */
         sensorsConnected = incomingMsgInt[6];
     }
 
     //updates all UI info
     void updateUIData() {
         //updates temp
-        lfGauge.setSpeed(lfData[1]);
-        rfGauge.setSpeed(rfData[1]);
-        lrGauge.setSpeed(lrData[1]);
-        rrGauge.setSpeed(rrData[1]);
-        lfBatt.setProgress(lfData[2]);
-        rfBatt.setProgress(rfData[2]);
-        lrBatt.setProgress(lrData[2]);
-        rrBatt.setProgress(rrData[2]);
-
-
+        tempGauge[0].setSpeed(lfData[1]);
+        tempGauge[1].setSpeed(rfData[1]);
+        tempGauge[2].setSpeed(lrData[1]);
+        tempGauge[3].setSpeed(rrData[1]);
+        binding.lfBatt.setProgress(lfData[2]);
+        binding.rfBatt.setProgress(rfData[2]);
+        binding.lrBatt.setProgress(lrData[2]);
+        binding.rrBatt.setProgress(rrData[2]);
     }
 
     private void setLedColor(final Button b, final int status) {
@@ -298,15 +298,14 @@ public class MainActivity extends AppCompatActivity {
                             b.setBackgroundTintList(ColorStateList.valueOf(Color.YELLOW));
                             break;
                     }
-
-                    Log.i(TAG, "color change called");
+                    //Log.i(TAG, "color change called");
                 }
             });
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
     }
-    private static IntentFilter makeGattUpdateIntentFilter() {
+    public static IntentFilter makeGattUpdateIntentFilter() {
         final IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(BluetoothLEService.ACTION_GATT_CONNECTED);
         intentFilter.addAction(BluetoothLEService.ACTION_GATT_DISCONNECTED);
