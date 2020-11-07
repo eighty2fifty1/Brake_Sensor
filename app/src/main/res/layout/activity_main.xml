@@ -8,15 +8,93 @@
     tools:context=".MainActivity">
 
 
+    <in.unicodelabs.kdgaugeview.KdGaugeView
+        android:id="@+id/lcGauge"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        android:layout_marginEnd="12dp"
+        android:clickable="true"
+        android:focusable="true"
+
+        android:onClick="displayStats"
+        android:visibility="visible"
+        app:animationTime="500"
+        app:layout_constraintEnd_toStartOf="@+id/vertCenterLine"
+        app:layout_constraintTop_toBottomOf="@+id/horizCenterLine"
+        app:maxSpeed="200"
+        app:minSpeed="0"
+        app:speed="46"
+        app:speedDialRingInnerPadding="10dp"
+        app:speedTextSize="30dp"
+        app:speed_limit="150"
+        app:unitOfMeasurement="\u2109"
+        app:unitOfMeasurementTextSize="15dp" />
+
+    <in.unicodelabs.kdgaugeview.KdGaugeView
+        android:id="@+id/rcGauge"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        android:layout_marginStart="12dp"
+
+        android:clickable="true"
+        android:focusable="true"
+        android:onClick="displayStats"
+        android:visibility="visible"
+        app:animationTime="500"
+        app:layout_constraintStart_toStartOf="@+id/vertCenterLine"
+        app:layout_constraintTop_toBottomOf="@+id/horizCenterLine"
+        app:maxSpeed="200"
+        app:minSpeed="0"
+        app:speed="46"
+        app:speedDialRingInnerPadding="10dp"
+        app:speedTextSize="30dp"
+        app:speed_limit="150"
+        app:unitOfMeasurement="\u2109"
+        app:unitOfMeasurementTextSize="15dp" />
+
+    <ProgressBar
+        android:id="@+id/rcBatt"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="85dp"
+        android:layout_height="105dp"
+        android:max="100"
+        android:rotation="-90"
+        android:scaleY="3"
+        android:visibility="visible"
+        app:layout_constraintStart_toEndOf="@+id/rcGauge"
+        app:layout_constraintTop_toBottomOf="@+id/horizCenterLine" />
+
+    <ProgressBar
+        android:id="@+id/lcBatt"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="85dp"
+        android:layout_height="105dp"
+        android:max="100"
+        android:rotation="-90"
+        android:scaleY="3"
+        android:visibility="visible"
+        app:layout_constraintEnd_toStartOf="@+id/lcGauge"
+        app:layout_constraintTop_toBottomOf="@+id/horizCenterLine" />
+
     <Button
-        android:id="@+id/rrLed"
+        android:id="@+id/lcLed"
         style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:backgroundTint="#8B8F8B"
         android:visibility="visible"
-        app:layout_constraintStart_toEndOf="@+id/rrGauge"
-        app:layout_constraintTop_toBottomOf="@+id/rrBatt" />
+        app:layout_constraintEnd_toStartOf="@+id/lcGauge"
+        app:layout_constraintTop_toBottomOf="@+id/lcBatt" />
+
+    <Button
+        android:id="@+id/rcLed"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:backgroundTint="#8B8F8B"
+        android:visibility="visible"
+        app:layout_constraintStart_toEndOf="@+id/rcGauge"
+        app:layout_constraintTop_toBottomOf="@+id/rcBatt" />
 
     <Button
         android:id="@+id/rfLed"
@@ -28,16 +106,6 @@
         app:layout_constraintBottom_toTopOf="@+id/rfBatt"
         app:layout_constraintStart_toEndOf="@+id/rfGauge" />
 
-    <Button
-        android:id="@+id/lrLed"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:backgroundTint="#8B8F8B"
-        android:visibility="visible"
-        app:layout_constraintEnd_toStartOf="@+id/lrGauge"
-        app:layout_constraintTop_toBottomOf="@+id/lrBatt" />
-
     <ProgressBar
         android:id="@+id/rfBatt"
         style="?android:attr/progressBarStyleHorizontal"
@@ -46,7 +114,8 @@
         android:max="100"
         android:rotation="-90"
         android:scaleY="3"
-        app:layout_constraintBottom_toTopOf="@+id/guideline2"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/horizCenterLine"
         app:layout_constraintStart_toEndOf="@+id/rfGauge" />
 
     <in.unicodelabs.kdgaugeview.KdGaugeView
@@ -56,11 +125,12 @@
         android:layout_marginStart="12dp"
 
         android:clickable="true"
-        android:focusable="auto"
+        android:focusable="true"
         android:onClick="displayStats"
+        android:visibility="visible"
         app:animationTime="500"
-        app:layout_constraintBottom_toTopOf="@+id/guideline2"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintBottom_toTopOf="@+id/horizCenterLine"
+        app:layout_constraintStart_toStartOf="@+id/vertCenterLine"
         app:maxSpeed="200"
         app:minSpeed="0"
         app:speed="46"
@@ -76,12 +146,13 @@
         android:layout_height="140dp"
         android:layout_marginEnd="12dp"
         android:clickable="true"
-        android:focusable="auto"
+        android:focusable="true"
         android:onClick="displayStats"
 
+        android:visibility="visible"
         app:animationTime="500"
-        app:layout_constraintBottom_toTopOf="@+id/guideline2"
-        app:layout_constraintEnd_toStartOf="@+id/guideline"
+        app:layout_constraintBottom_toTopOf="@+id/horizCenterLine"
+        app:layout_constraintEnd_toStartOf="@+id/vertCenterLine"
         app:maxSpeed="200"
         app:minSpeed="0"
         app:speed="46"
@@ -109,21 +180,24 @@
         android:max="100"
         android:rotation="-90"
         android:scaleY="3"
-        app:layout_constraintBottom_toTopOf="@+id/guideline2"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/horizCenterLine"
         app:layout_constraintEnd_toStartOf="@+id/lfGauge" />
 
     <in.unicodelabs.kdgaugeview.KdGaugeView
         android:id="@+id/lrGauge"
         android:layout_width="140dp"
         android:layout_height="140dp"
+        android:layout_marginTop="144dp"
         android:layout_marginEnd="12dp"
         android:clickable="true"
-        android:focusable="auto"
-        android:onClick="displayStats"
+        android:focusable="true"
 
+        android:onClick="displayStats"
+        android:visibility="visible"
         app:animationTime="500"
-        app:layout_constraintEnd_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toBottomOf="@+id/lfGauge"
+        app:layout_constraintEnd_toStartOf="@+id/vertCenterLine"
+        app:layout_constraintTop_toBottomOf="@+id/horizCenterLine"
         app:maxSpeed="200"
         app:minSpeed="0"
         app:speed="46"
@@ -133,51 +207,77 @@
         app:unitOfMeasurement="\u2109"
         app:unitOfMeasurementTextSize="15dp" />
 
-    <in.unicodelabs.kdgaugeview.KdGaugeView
-        android:id="@+id/rrGauge"
-        android:layout_width="140dp"
-        android:layout_height="140dp"
-        android:layout_marginStart="12dp"
-        android:clickable="true"
-
-        android:focusable="auto"
-        android:onClick="displayStats"
-        app:animationTime="500"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toBottomOf="@+id/rfGauge"
-        app:maxSpeed="200"
-        app:minSpeed="0"
-        app:speed="46"
-        app:speedDialRingInnerPadding="10dp"
-        app:speedTextSize="30dp"
-        app:speed_limit="150"
-        app:unitOfMeasurement="\u2109"
-        app:unitOfMeasurementTextSize="15dp" />
+    <Button
+        android:id="@+id/lrLed"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:backgroundTint="#8B8F8B"
+        android:visibility="visible"
+        app:layout_constraintEnd_toStartOf="@+id/lrGauge"
+        app:layout_constraintTop_toBottomOf="@+id/lrBatt" />
 
     <ProgressBar
         android:id="@+id/rrBatt"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="85dp"
         android:layout_height="105dp"
+        android:layout_marginTop="144dp"
         android:max="100"
         android:rotation="-90"
         android:scaleY="3"
+        android:visibility="visible"
         app:layout_constraintStart_toEndOf="@+id/rrGauge"
-        app:layout_constraintTop_toBottomOf="@+id/rfBatt" />
+        app:layout_constraintTop_toBottomOf="@+id/horizCenterLine" />
 
     <ProgressBar
         android:id="@+id/lrBatt"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="85dp"
         android:layout_height="105dp"
+        android:layout_marginTop="144dp"
         android:max="100"
         android:rotation="-90"
         android:scaleY="3"
+        android:visibility="visible"
         app:layout_constraintEnd_toStartOf="@+id/lrGauge"
-        app:layout_constraintTop_toBottomOf="@+id/lfBatt" />
+        app:layout_constraintTop_toBottomOf="@+id/horizCenterLine" />
+
+    <Button
+        android:id="@+id/rrLed"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:backgroundTint="#8B8F8B"
+        android:visibility="visible"
+        app:layout_constraintStart_toEndOf="@+id/rrGauge"
+        app:layout_constraintTop_toBottomOf="@+id/rrBatt" />
+
+    <in.unicodelabs.kdgaugeview.KdGaugeView
+        android:id="@+id/rrGauge"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="144dp"
+
+        android:clickable="true"
+        android:focusable="true"
+        android:onClick="displayStats"
+        android:visibility="visible"
+        app:animationTime="500"
+        app:layout_constraintStart_toStartOf="@+id/vertCenterLine"
+        app:layout_constraintTop_toBottomOf="@+id/horizCenterLine"
+        app:maxSpeed="200"
+        app:minSpeed="0"
+        app:speed="46"
+        app:speedDialRingInnerPadding="10dp"
+        app:speedTextSize="30dp"
+        app:speed_limit="150"
+        app:unitOfMeasurement="\u2109"
+        app:unitOfMeasurementTextSize="15dp" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline"
+        android:id="@+id/vertCenterLine"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
@@ -188,7 +288,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline2"
+        android:id="@+id/horizCenterLine"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"

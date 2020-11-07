@@ -12,11 +12,16 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class DatabaseTable {
-    private static final String TAG = "DictionaryDatabase";
+    private static final String TAG = DatabaseTable.class.getSimpleName();
 
     //The columns we'll include in the dictionary table
-    public static final String COL_WORD = "WORD";
-    public static final String COL_DEFINITION = "DEFINITION";
+    public static final String COL_TIME = "TIME";
+    public static final String COL_LF = "LF";
+    public static final String COL_RF = "RF";
+    public static final String COL_LR = "LR";
+    public static final String COL_RR = "RR";
+    public static final String COL_LC = "LC";
+    public static final String COL_RC = "RC";
 
     private static final String DATABASE_NAME = "DICTIONARY";
     private static final String FTS_VIRTUAL_TABLE = "FTS";
@@ -35,8 +40,8 @@ public class DatabaseTable {
         private static final String FTS_TABLE_CREATE =
                 "CREATE VIRTUAL TABLE " + FTS_VIRTUAL_TABLE +
                         " USING fts3 (" +
-                        COL_WORD + ", " +
-                        COL_DEFINITION + ")";
+                        COL_TIME + ", " +
+                        COL_LF + ", " + COL_RF + ", " + COL_LR + ", " + COL_RR + ", " + COL_LC + ", " + COL_RC + ")";
 
         DatabaseOpenHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);

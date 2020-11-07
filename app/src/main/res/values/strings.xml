@@ -74,5 +74,20 @@
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="channel_name">Sensor Channel</string>
     <string name="channel_description">My Channel</string>
+    <string name="stock_ticker">Stock Ticker</string>
+    <string name="period">Period</string>
+    <string name="_1_day">1 Day</string>
+    <string name="_30_days">30 Days</string>
+    <string name="_90_days">90 Days</string>
+    <string name="_12_months">12 Months</string>
+    <string name="price_interval">Price Interval</string>
+    <string name="daily">Daily</string>
+    <string name="weekly">Weekly</string>
+    <string name="monthly">Monthly</string>
+    <string name="price_data_sets">Price Data Sets</string>
+    <string name="high">High</string>
+    <string name="low">Low</string>
+    <string name="close">Close</string>
+    <string name="get_prices">Get Prices</string>
 
 </resources>

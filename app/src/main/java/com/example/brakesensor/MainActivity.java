@@ -89,12 +89,6 @@ public class MainActivity extends AppCompatActivity {
     };
 
 
-    // Handles various events fired by the Service.
-// ACTION_GATT_CONNECTED: connected to a GATT server.
-// ACTION_GATT_DISCONNECTED: disconnected from a GATT server.
-// ACTION_GATT_SERVICES_DISCOVERED: discovered GATT services.
-// ACTION_DATA_AVAILABLE: received data from the device. This can be a
-// result of read or notification operations.
     private final BroadcastReceiver gattUpdateReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -105,14 +99,6 @@ public class MainActivity extends AppCompatActivity {
                 invalidateOptionsMenu();
             } else if (BluetoothLEService.ACTION_GATT_DISCONNECTED.equals(action)) {
                 connected = false;
-                //updateConnectionState(R.string.disconnected);
-                invalidateOptionsMenu();
-                //clearUI();
-            } else if (BluetoothLEService.
-                    ACTION_GATT_SERVICES_DISCOVERED.equals(action)) {
-                // Show all the supported services and characteristics on the
-                // user interface.
-                //displayGattServices(BluetoothLEService.getSupportedGattServices());
             } else if (BluetoothLEService.ACTION_DATA_AVAILABLE.equals(action)) {
                 //displayData(intent.getStringExtra(BluetoothLEService.EXTRA_DATA));
                 Log.i(TAG, "something received" + intent.getStringExtra(BluetoothLEService.EXTRA_DATA));
@@ -154,15 +140,21 @@ public class MainActivity extends AppCompatActivity {
         editor = sharedPrefs.edit();
         sensorsExpected = sharedPrefs.getInt(String.valueOf(R.integer.sensors_expected), defaultSensors);
 
+        configureUI(sensorsExpected);
+
         //enables UI components
         tempGauge[0] = binding.lfGauge;
         tempGauge[1] = binding.rfGauge;
         tempGauge[2] = binding.lrGauge;
         tempGauge[3] = binding.rrGauge;
+        tempGauge[4] = binding.lcGauge;
+        tempGauge[5] = binding.rcGauge;
         statusLed[0] = binding.lfLed;
         statusLed[1] = binding.rfLed;
         statusLed[2] = binding.lrLed;
         statusLed[3] = binding.rrLed;
+        statusLed[4] = binding.lcLed;
+        statusLed[5] = binding.rcLed;
 
 
 
@@ -176,6 +168,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        configureUI(sensorsExpected);
+
         registerReceiver(gattUpdateReceiver, makeGattUpdateIntentFilter());
         //bindService(leServiceIntent, mServiceConnection, BIND_ABOVE_CLIENT);
         stopService(notifyServiceIntent);       //should disable notifications while app is running in foreground
@@ -273,10 +267,14 @@ public class MainActivity extends AppCompatActivity {
         tempGauge[1].setSpeed(rfData[1]);
         tempGauge[2].setSpeed(lrData[1]);
         tempGauge[3].setSpeed(rrData[1]);
+        tempGauge[4].setSpeed(lcData[1]);
+        tempGauge[5].setSpeed(rcData[1]);
         binding.lfBatt.setProgress(lfData[2]);
         binding.rfBatt.setProgress(rfData[2]);
         binding.lrBatt.setProgress(lrData[2]);
         binding.rrBatt.setProgress(rrData[2]);
+        binding.lcBatt.setProgress(lcData[2]);
+        binding.rcBatt.setProgress(rcData[2]);
     }
 
     private void setLedColor(final Button b, final int status) {
@@ -318,5 +316,36 @@ public class MainActivity extends AppCompatActivity {
 
     public void displayStats(View view) {
         Toast.makeText(this, view.toString(), Toast.LENGTH_LONG).show();
+    }
+
+    private void configureUI(int sensors){
+        switch (sensors / 2){
+            case 1:
+                binding.lrLed.setVisibility(View.INVISIBLE);
+                binding.lrBatt.setVisibility(View.INVISIBLE);
+                binding.lrGauge.setVisibility(View.INVISIBLE);
+                binding.rrLed.setVisibility(View.INVISIBLE);
+                binding.rrBatt.setVisibility(View.INVISIBLE);
+                binding.rrGauge.setVisibility(View.INVISIBLE);
+                binding.lcLed.setVisibility(View.INVISIBLE);
+                binding.lcBatt.setVisibility(View.INVISIBLE);
+                binding.lcGauge.setVisibility(View.INVISIBLE);
+                binding.rcLed.setVisibility(View.INVISIBLE);
+                binding.rcBatt.setVisibility(View.INVISIBLE);
+                binding.rcGauge.setVisibility(View.INVISIBLE);
+                break;
+            case 2:
+                binding.lcLed.setVisibility(View.INVISIBLE);
+                binding.lcBatt.setVisibility(View.INVISIBLE);
+                binding.lcGauge.setVisibility(View.INVISIBLE);
+                binding.rcLed.setVisibility(View.INVISIBLE);
+                binding.rcBatt.setVisibility(View.INVISIBLE);
+                binding.rcGauge.setVisibility(View.INVISIBLE);
+
+                //TODO modify constraints of rear widgets programatically
+                break;
+            case 3:
+                break;
+        }
     }
 }
