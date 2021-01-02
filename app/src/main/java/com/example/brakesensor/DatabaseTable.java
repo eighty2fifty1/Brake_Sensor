@@ -1,9 +1,11 @@
 package com.example.brakesensor;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.text.TextUtils;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -46,6 +48,7 @@ public class DatabaseTable {
         DatabaseOpenHelper(Context context) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
             helperContext = context;
+
         }
 
         @Override
@@ -77,15 +80,36 @@ public class DatabaseTable {
 
         private void loadWords() throws IOException {
             final Resources resources = helperContext.getResources();
-            //InputStream inputStream = resources.openRawResource(R.raw.saved_sensor_data);
-            //BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            InputStream inputStream = resources.openRawResource(R.raw.saved_sensor_data);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 
-            try{
+            try {
                 String line;
-            }
-            catch (Exception e){
-                e.printStackTrace();
+                while ((line = reader.readLine()) != null) {
+                    String[] strings = TextUtils.split(line, "-");
+                    if (strings.length < 2) continue;
+                    long id = addWord(strings[0].trim(), strings[1].trim(), strings[2].trim(), strings[3].trim(), strings[4].trim(), strings[5].trim(), strings[6].trim());
+                    if (id < 0) {
+                        Log.e(TAG, "unable to add word: " + strings[0].trim());
+                    }
+                }
+            } finally {
+                reader.close();
             }
         }
+
+        public long addWord(String time, String lf, String rf, String lr, String rr, String lc, String rc) {
+            ContentValues initialValues = new ContentValues();
+            initialValues.put(COL_TIME, time);
+            initialValues.put(COL_LC, lc);
+            initialValues.put(COL_LF, lf);
+            initialValues.put(COL_LR, lr);
+            initialValues.put(COL_RC, rc);
+            initialValues.put(COL_RF, rf);
+            initialValues.put(COL_RR, rr);
+
+            return database.insert(FTS_VIRTUAL_TABLE, null, initialValues);
+        }
+
     }
 }
